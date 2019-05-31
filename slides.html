@@ -1,0 +1,538 @@
+<!doctype html>
+<html>
+
+  <head>
+	<meta charset="utf-8">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    	<title>
+      Interactive HTML Slides<br>for Geometry Processing: using the PMP library 
+    </title>
+    
+	<!-- reveal's style sheets -->
+    <link rel="stylesheet" href="./revealSlides/reveal.js/css/reset.css">
+	<link rel="stylesheet" href="./revealSlides/reveal.js/css/reveal.css">
+
+	<!-- Theme of AG CG (derived from reveal's white.css) -->
+	<link rel="stylesheet" href="./revealSlides/css/agcg.css">
+
+    <!-- font needed for chalkboard buttons and menu -->
+    <link rel="stylesheet" href="./revealSlides/Font-Awesome/css/all.css">
+
+	<!-- Setup code formatting with highlight.js -->
+	<link rel="stylesheet" href="./revealSlides/mb-plugins/highlight/xcode.css">
+
+    <!-- color picker for chalkboard -->
+    <script src="./revealSlides/piklor.js/src/piklor.js"></script>
+
+    <!-- stuff for quiz: note that we need chart.js, but that is loaded by a plugin -->
+    <script src="./revealSlides/qrcodejs/qrcode.min.js"></script>
+
+
+	<!-- Printing and PDF exports -->
+	<script>
+	  var link = document.createElement( 'link' );
+	  link.rel = 'stylesheet';
+	  link.type = 'text/css';
+	  link.href = window.location.search.match( /print-pdf/gi ) ? './revealSlides/reveal.js/css/print/pdf.css' : './revealSlides/reveal.js/css/print/paper.css';
+	  document.getElementsByTagName( 'head' )[0].appendChild( link );
+
+      // MARIO version
+	  if (window.location.search.match( /print-pdf/gi ))
+      {
+	    var link = document.createElement( 'link' );
+	    link.rel = 'stylesheet';
+	    link.type = 'text/css';
+	    link.href = './revealSlides/css/agcg-pdf.css';
+	    document.getElementsByTagName( 'head' )[0].appendChild( link );
+      }
+	</script>
+
+
+    <!-- MathJax config -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+          menuSettings: { zoom: "Double-Click" },
+          styles: { ".reveal section .MJXc-display": { margin: "0.5em 0em 1em 0em" } },
+          TeX: {
+              Macros: {
+                R: "{\\mathrm{{I}\\kern-.15em{R}}}",
+                laplace: "{\\Delta}",
+                grad: "{\\nabla}",
+                T: "^{\\mathsf{T}}",
+                abs: ['\\left\\lvert #1 \\right\\rvert', 1],
+                norm: ['\\left\\Vert #1 \\right\\Vert', 1],
+                iprod: ['\\left\\langle #1 \\right\\rangle', 1],
+                vec: ['\\boldsymbol{\\mathbf{#1}}', 1],
+                mat: ['\\boldsymbol{\\mathbf{#1}}', 1],
+                set: ['\\mathcal{#1}', 1],
+                func: ['\\mathrm{#1}', 1],
+                trans: ['{#1}\\mkern-1mu^{\\mathsf{T}}', 1],
+                matrix: ['\\begin{bmatrix} #1 \\end{bmatrix}', 1],
+                vector: ['\\begin{pmatrix} #1 \\end{pmatrix}', 1],
+                of: ['\\mkern{-2mu}\\left( #1 \\right\)', 1],
+                diff: ['\\frac{\\mathrm{d}{#1}}{\\mathrm{d}{#2}}', 2],
+                pdiff: ['\\frac{\\partial {#1}}{\\partial {#2}}', 2]
+              }
+          },
+      });
+    </script>
+
+  </head>
+
+  <body>
+
+
+    <!-- here come the slides -->
+    <div class="reveal">
+	  <div class="slides">
+
+
+        <!-- Title slide -->
+                <section>
+            <div class="white-on-blue">
+                <div class="title"> Interactive HTML Slides<br>for Geometry Processing </div>
+                                <div class="subtitle"> using the PMP library </div>
+                            </div>
+                                    <div class="author"> Mario Botsch </div>
+                        <div class="affiliation"> Graphics &amp; Geometry Group<br>Bielefeld University </div>
+                                </section>
+        
+
+        <!-- Table of Contents -->
+        
+
+<!-- all the slides from markdown document: DO NOT INDENT THE body LINE!!! -->
+<section id="how-to-use-these-html-slides" class="slide level1">
+<h1>How to use these HTML slides</h1>
+<ul>
+<li>Use the cursor keys <strong>left</strong>/<strong>right</strong> to navigate through the slides</li>
+<li>Click <strong>page number</strong> (bottom right) to open navigation menu</li>
+<li>Press <strong>f</strong>/<strong>ESC</strong> to enter/leave fullscreen mode</li>
+<li>Press <strong>o</strong> or <strong>ESC</strong> to enter/leave overview mode</li>
+<li><strong>Double-click</strong> an item (e.g. an image) to zoom in/out.</li>
+</ul>
+</section>
+<section id="interactive-demo-applications" class="slide level1">
+<h1>Interactive Demo Applications</h1>
+<ul>
+<li>The demos are written in C++ using the <a href="http://pmp-library.org">PMP library</a></li>
+<li>They are cross-compiled to Javascript using <a href="http://emscripten.org">emscripten</a></li>
+<li>They require support for WebGL 2
+<ul>
+<li>See <a href="https://caniuse.com/webgl2" class="uri">https://caniuse.com/webgl2</a></li>
+<li>The demos work nicely on Chrome, Chromium, or Firefox</li>
+<li>They do not run on Apple Safari in MacOS and iOS</li>
+</ul></li>
+</ul>
+</section>
+<section id="subdivision-surfaces" class="slide level1 section">
+<h1>Subdivision Surfaces</h1>
+</section>
+<section id="loop-subdivision" class="slide level1">
+<h1>Loop Subdivision</h1>
+<ul>
+<li>Subdivision scheme for triangle meshes<br />
+<img class="" style="" src="images/subdivision-triangle.png" style=""></img></li>
+<li>Generates <span class="math inline">\(C^2\)</span> continuous limit surfaces:
+<ul>
+<li><span class="math inline">\(C^1\)</span> for extraordinary vertices (valence ≠ 6)</li>
+<li><span class="math inline">\(C^2\)</span> continuous everywhere else</li>
+</ul></li>
+</ul>
+<p><a href="https://www.microsoft.com/en-us/research/wp-content/uploads/2016/02/thesis-10.pdf" class="footer" target="_blank">Loop, <em>Smooth Subdivision Surfaces Based on Triangles</em>, M.S. thesis, 1987</a></p>
+</section>
+<section id="loop-subdivision-rules" class="slide level1">
+<h1>Loop Subdivision Rules</h1>
+<p><figure class="" style=""><img  src="images/loop-rule-1.png" style=""></img><figcaption>New edge vertices</figcaption></figure> <span style="display:inline-block; width:100px;"></span> <figure class="" style=""><img  src="images/loop-rule-2.png" style=""></img><figcaption>Update old vertices (valence <span class="math inline">\(k\)</span>)</figcaption></figure></p>
+<p><a href="https://www.microsoft.com/en-us/research/wp-content/uploads/2016/02/thesis-10.pdf" class="footer" target="_blank">Loop, <em>Smooth Subdivision Surfaces Based on Triangles</em>, M.S. thesis, 1987</a></p>
+</section>
+<section id="generalized-catmull-clark-subdivision" class="slide level1">
+<h1>Generalized Catmull-Clark Subdivision</h1>
+<ul>
+<li>Subdivision scheme for <strong>arbitrary polygons</strong><br />
+<img class="" style="" src="images/subdivision-polygon.png" style=""></img></li>
+<li>Connect new face points to edge-vertex-edge triple
+<ul>
+<li>Turns all polygon faces into quads</li>
+</ul></li>
+<li>Generates <span class="math inline">\(C^2\)</span> continuous limit surfaces:
+<ul>
+<li><span class="math inline">\(C^1\)</span> for extraordinary vertices (valence ≠ 4)</li>
+<li><span class="math inline">\(C^2\)</span> continuous everywhere else</li>
+</ul></li>
+</ul>
+<p><a href="http://graphics.pixar.com/library/Geri/paper.pdf" class="footer" target="_blank">DeRose et al, <em>Subdivision Surfaces in Character Animation</em>, SIGGRAPH 1998</a></p>
+</section>
+<section id="catmull-clark-rules" class="slide level1">
+<h1>Catmull-Clark Rules</h1>
+<div style="clear:both; height:50px;">
+
+</div>
+<div class="col30">
+<p><figure class="" style=""><img  src="images/catmull-clark-rule-6.png" style=""></img><figcaption>New face vertices</figcaption></figure></p>
+<div class="tiny">
+<p><span class="math display">\[\vec{f} = \frac{1}{n} \sum_{i=1}^n \vec{v}_i\]</span></p>
+</div>
+</div>
+<div class="col30">
+<p><figure class="" style=""><img  src="images/catmull-clark-rule-7.png" style=""></img><figcaption>New edge vertices</figcaption></figure></p>
+<div class="tiny">
+<p><span class="math display">\[\vec{e} = \frac{1}{4} \left(\vec{v}_1 + \vec{v}_2 + \vec{f}_1 + \vec{f}_2\right)\]</span></p>
+</div>
+</div>
+<div class="col40">
+<p><figure class="" style=""><img  src="images/catmull-clark-rule-8.png" style=""></img><figcaption>Update old vertices (valence <span class="math inline">\(k\)</span>)</figcaption></figure></p>
+<div class="tiny">
+<p><span class="math display">\[
+\vec{v} = \frac{k-2}{k} \vec{v}
++ \frac{1}{k^2} \sum_{i=1}^k \vec{v}_i
++ \frac{1}{k^2} \sum_{i=1}^k \vec{f}_i
+\]</span></p>
+</div>
+</div>
+<p><a href="http://graphics.pixar.com/library/Geri/paper.pdf" class="footer" target="_blank">DeRose et al, <em>Subdivision Surfaces in Character Animation</em>, SIGGRAPH 1998</a></p>
+</section>
+<section id="try-it-yourself" class="slide level1">
+<h1>Try it yourself!</h1>
+<p><figure class="" style="width:1000px;height:550px;"><iframe  data-src="demos/subdiv/subdiv.html?model=../../meshes/cross.off"class="" style="width:1000px;height:550px;" ></iframe><figcaption>pure quad mesh (triangulate for Loop subdivision)</figcaption></figure></p>
+</section>
+<section id="try-it-yourself-1" class="slide level1">
+<h1>Try it yourself!</h1>
+<p><figure class="" style="width:1000px;height:550px;"><iframe  data-src="demos/subdiv/subdiv.html"class="" style="width:1000px;height:550px;" ></iframe><figcaption>mixed tri-quad mesh</figcaption></figure></p>
+<p><span class="footer">Model created using Blender, original from Willem-Paul van Overbruggen</span></p>
+</section>
+<section id="surface-smoothing" class="slide level1 section">
+<h1>Surface Smoothing</h1>
+</section>
+<section id="diffusion-flow-on-meshes" class="slide level1">
+<h1>Diffusion Flow on Meshes</h1>
+<ul>
+<li>Continuous PDE: <span class="math inline">\(\frac{\partial \vec{x}}{\partial t} \;=\; \lambda \Delta \vec{x}\)</span></li>
+<li>Explicit integration per vertex: <span class="math inline">\(\vec{x}_i \leftarrow \vec{x}_i + \delta t \, \lambda \Delta \vec{x}_i\)</span></li>
+</ul>
+<p><figure class="" style="height:300px;"><img  src="images/smooth-bunny-0.png" style="height:300px;"></img><figcaption>0 iterations</figcaption></figure> <figure class="" style="height:300px;"><img  src="images/smooth-bunny-10.png" style="height:300px;"></img><figcaption>10 iterations</figcaption></figure> <figure class="" style="height:300px;"><img  src="images/smooth-bunny-100.png" style="height:300px;"></img><figcaption>100 iterations</figcaption></figure></p>
+</section>
+<section id="uniform-laplace-discretization" class="slide level1">
+<h1>Uniform Laplace Discretization</h1>
+<p><span class="math display">\[
+\laplace \vec{x}\of{v_i}
+\;:=\;
+\frac{1}{\abs{\set{N}_1\of{v_i}}}
+\sum_{v_j \in \set{N}_1\of{v_i}} \left( \vec{x}\of{v_j} - \vec{x}\of{v_i} \right)
+\]</span></p>
+<div id="section">
+<div style="width:70%;float:left">
+<ul>
+<li>Properties
+<ul>
+<li>simple and efficient</li>
+<li>depends only on connectivity</li>
+<li>does not take into account geometry at all</li>
+</ul></li>
+</ul>
+</div>
+<div style="width:30%;float:left">
+<p><img class="" style="height:200px;" src="images/uniformLaplace.png" style="height:200px;"></img></p>
+</div>
+<div style="clear: both">
+
+</div>
+</div>
+<p><a href="http://mesh.brown.edu/taubin/pdfs/taubin-sg95.pdf" class="footer" target="_blank">Taubin, <em>A Signal Processing Approach to Fair Surface Design</em>, SIGGRAPH 1995</a></p>
+</section>
+<section id="cotan-laplace-discretization" class="slide level1">
+<h1>Cotan Laplace Discretization</h1>
+<p><span class="math display">\[
+\laplace \vec{x}\of{v_i} \;:=\;
+\frac{1}{2A\of{v_i}}
+\sum_{v_j \in \set{N}_1\of{v_i}}
+\left( \cot \alpha_{ij} + \cot \beta_{ij} \right)
+\left( \vec{x}\of{v_j} - \vec{x}\of{v_i} \right)
+\]</span></p>
+<div id="section-1">
+<div style="width:70%;float:left">
+<ul>
+<li>Properties
+<ul>
+<li>takes geometry and connectivity into account</li>
+<li>more accurate discretization</li>
+<li>can be derived through FEM</li>
+</ul></li>
+</ul>
+</div>
+<div style="width:30%;float:left">
+<p><img class="" style="height:200px;" src="images/cotanLaplace.png" style="height:200px;"></img></p>
+</div>
+<div style="clear: both">
+
+</div>
+</div>
+<p><a href="http://multires.caltech.edu/pubs/diffGeoOps.pdf" class="footer" target="_blank">Meyer et al, <em>Discrete Differential-Geometry Operators for Triangulated 2-Manifolds</em>, VisMath III, 2003</a></p>
+</section>
+<section id="uniform-or-cotan-discretization" class="slide level1">
+<h1>Uniform or Cotan Discretization?</h1>
+<div id="section-2">
+<div style="width:50%;float:left">
+<ul>
+<li>Uniform Laplacian is an inaccurate discretization</li>
+<li>Might be non-zero even for planar meshes</li>
+<li>Smoothes geometry <strong>and</strong> triangulation</li>
+<li>Might be desired for mesh regularization</li>
+</ul>
+</div>
+<div style="width:50%;float:left">
+<p><img class="" style="width:400px;" src="images/umbrella_distortion.png" style="width:400px;"></img></p>
+</div>
+<div style="clear: both">
+
+</div>
+</div>
+<p><a href="http://w.multires.caltech.edu/pubs/ImplicitFairing.pdf" class="footer" target="_blank">Desbrun et al, <em>Implicit Fairing of Irregular Meshes using Diffusion and Curvature Flow</em>, SIGGRAPH 1999</a></p>
+</section>
+<section id="numerical-integration" class="slide level1">
+<h1>Numerical Integration</h1>
+<ul>
+<li class="fragment">Let’s write the position update in matrix notation</li>
+<li class="fragment">Write all points <span class="math inline">\(\vec{x}_i^{(t)}\)</span> in a large vector/matrix: <span class="math display">\[\vec{X}^{(t)} = \trans{\left( \vec{x}_1^{(t)}, \ldots, \vec{x}_n^{(t)}  \right)} \in \R^{n\times 3}\]</span></li>
+<li class="fragment">Matrix version of explicit integration <span class="math display">\[\vec{X}^{(t+1)} = (\vec{I} + \delta t \, \lambda \vec{L}) \, \vec{X}^{(t)}\]</span></li>
+<li class="fragment">Matrix version of implicit integration <span class="math display">\[(\vec{I} - \delta t \, \lambda \vec{L}) \, \vec{X}^{(t+1)} = \vec{X}^{(t)}\]</span></li>
+</ul>
+<div class="comment fragment" style="left: 750px; top: 400px;">
+Easy to implement, but requires small <span class="math inline">\(\delta t \lambda\)</span> for stability
+</div>
+<div class="comment fragment" style="left: 750px; top: 530px;">
+Works for any <span class="math inline">\(\delta t \lambda\)</span>, but has to solve linear system(s)
+</div>
+<p><a href="http://w.multires.caltech.edu/pubs/ImplicitFairing.pdf" class="footer" target="_blank">Desbrun et al, <em>Implicit Fairing of Irregular Meshes using Diffusion and Curvature Flow</em>, SIGGRAPH 1999</a></p>
+</section>
+<section id="try-it-yourself-2" class="slide level1">
+<h1>Try it yourself!</h1>
+<p><iframe  data-src="demos/smoothing/smoothing.html?model=../../meshes/kiss.off" class="" style="width:1000px;height:600px;"></iframe></p>
+</section>
+<section id="isotropic-remeshing" class="slide level1 section">
+<h1>Isotropic Remeshing</h1>
+</section>
+<section id="isotropic-triangle-remeshing" class="slide level1">
+<h1>Isotropic Triangle Remeshing</h1>
+<div id="section-3">
+<div style="width:33%;float:left">
+<p><figure class="" style="height:500px;"><img  src="images/remesh_max_original.png" style="height:500px;"></img><figcaption>original mesh</figcaption></figure></p>
+</div>
+<div style="width:33%;float:left">
+<p><figure class="" style="height:500px;"><img  src="images/remesh_max_uniform.png" style="height:500px;"></img><figcaption>uniform remeshing</figcaption></figure></p>
+</div>
+<div style="width:33%;float:left">
+<p><figure class="" style="height:500px;"><img  src="images/remesh_max_adaptive.png" style="height:500px;"></img><figcaption>adaptive remeshing</figcaption></figure></p>
+</div>
+<div style="clear: both">
+
+</div>
+</div>
+</section>
+<section id="uniform-remeshing" class="slide level1">
+<h1>Uniform Remeshing</h1>
+<div style="clear:both; height:50px;">
+
+</div>
+<ul>
+<li>Specify target edge length <span class="math inline">\(L\)</span></li>
+<li>Iterate a few times
+<ol type="1">
+<li><strong>Split</strong> edges longer than <span class="math inline">\(\frac{4}{3} L\)</span></li>
+<li><strong>Collapse</strong> edges shorter than <span class="math inline">\(\frac{4}{5}L\)</span></li>
+<li><strong>Flip</strong> edges to get closer to valence 6</li>
+<li><strong>Shift</strong> vertices by tangential relaxation</li>
+<li><strong>Project</strong> vertices onto input mesh</li>
+</ol></li>
+</ul>
+<p><a href="https://graphics.uni-bielefeld.de/publications/sgp04.pdf" class="footer" target="_blank">Botsch &amp; Kobbelt, <em>A Remeshing Approach to Multiresolution Modeling</em>, SGP 2004</a></p>
+</section>
+<section id="local-remeshing-operators" class="slide level1">
+<h1>Local Remeshing Operators</h1>
+<p><img class="" style="height:500px;" src="images/edge_collapse.png" style="height:500px;"></img> <img class="" style="height:500px;" src="images/edge_split.png" style="height:500px;"></img> <img class="" style="height:500px;" src="images/edge_flip.png" style="height:500px;"></img> <img class="" style="height:500px;" src="images/vertex_shift.png" style="height:500px;"></img></p>
+<p><a href="https://graphics.uni-bielefeld.de/publications/sgp04.pdf" class="footer" target="_blank">Botsch &amp; Kobbelt, <em>A Remeshing Approach to Multiresolution Modeling</em>, SGP 2004</a></p>
+</section>
+<section id="adaptive-remeshing" class="slide level1">
+<h1>Adaptive Remeshing</h1>
+<div id="section-4">
+<div style="width:60%;float:left">
+<ul>
+<li>Adapt edge length to local curvature</li>
+<li>Compute maximum principle curvature on reference mesh</li>
+<li>Determine local target edge length from max-curvature</li>
+<li>Adjust split &amp; collapse criteria accordingly</li>
+</ul>
+</div>
+<div style="width:40%;float:left">
+<p><img class="" style="width:400px;" src="images/remesh-julius-2.png" style="width:400px;"></img></p>
+</div>
+<div style="clear: both">
+
+</div>
+</div>
+<p><a href="https://graphics.uni-bielefeld.de/publications/eg13-remeshing.pdf" class="footer" target="_blank">Dunyach et al, <em>Adaptive Remeshing for Real-Time Mesh Deformation</em>, EG 2013</a></p>
+</section>
+<section id="real-time-remeshing" class="slide level1">
+<h1>Real-Time Remeshing</h1>
+<p><video data-autoplay controls src="videos/remesh-snake-1.mp4"class="" style="height:600px;"></video></p>
+<p><a href="https://graphics.uni-bielefeld.de/publications/eg13-remeshing.pdf" class="footer" target="_blank">Dunyach et al, <em>Adaptive Remeshing for Real-Time Mesh Deformation</em>, EG 2013</a></p>
+</section>
+<section id="real-time-remeshing-1" class="slide level1">
+<h1>Real-Time Remeshing</h1>
+<p><video data-autoplay controls src="videos/remesh-snake-2.mp4"class="" style="height:600px;"></video></p>
+<p><a href="https://graphics.uni-bielefeld.de/publications/eg13-remeshing.pdf" class="footer" target="_blank">Dunyach et al, <em>Adaptive Remeshing for Real-Time Mesh Deformation</em>, EG 2013</a></p>
+</section>
+<section id="lets-try" class="slide level1">
+<h1>Let’s try!</h1>
+<p><iframe  data-src="demos/remeshing/remeshing.html?model=../../meshes/amo-highres.off" class="" style="width:1000px;height:600px;"></iframe></p>
+</section>
+<section id="feature-preservation" class="slide level1">
+<h1>Feature Preservation</h1>
+<div id="section-5">
+<div style="width:60%;float:left">
+<ul>
+<li>Define feature edges / vertices
+<ul>
+<li>Large dihedral angles</li>
+<li>Material boundaries</li>
+</ul></li>
+<li>Adjust local operators
+<ul>
+<li>Don’t flip feature edges</li>
+<li>Collapse only along features</li>
+<li>Univariate smoothing</li>
+<li>Project to feature curves</li>
+<li>Don’t touch feature vertices</li>
+</ul></li>
+</ul>
+</div>
+<div style="width:40%;float:left">
+<p><img class="" style="width:400px;" src="images/remesh-fan-2.png" style="width:400px;"></img></p>
+</div>
+<div style="clear: both">
+
+</div>
+</div>
+</section>
+<section id="lets-try-1" class="slide level1">
+<h1>Let’s try!</h1>
+<p><iframe  data-src="demos/remeshing/remeshing.html?model=../../meshes/fan-bad.off" class="" style="width:1000px;height:600px;"></iframe></p>
+</section>
+
+
+	  </div>
+	</div>
+
+
+	<script src="./revealSlides/reveal.js/js/reveal.js"></script>
+
+
+	<script>
+
+	  // More info https://github.com/hakimel/reveal.js#configuration
+	  Reveal.initialize({
+
+
+      // reveal settings
+      controls:     false,
+      progress:     false,
+      slideNumber:  true,
+	  history:      true,
+      center:       false,
+      transition:   'none',
+      viewDistance: 2, // otherwise videos start early
+      width:         1024 ,
+      height:         768 ,
+      minScale:     0.2,
+      maxScale:     5,
+      //pdfMaxPagesPerSlide: 10, // slides are cropped on one page for PDF export
+      pdfSeparateFragments: true,
+	  hideInactiveCursor: true,
+	  hideCursorTime: 3000,
+
+
+      // use local mathjax installation, use CommonHTML
+      math: { mathjax: './revealSlides/MathJax/MathJax.js' },
+
+
+      // setup reveal-menu
+      menu: {
+        side:              'right',
+        numbers:           true,
+        titleSelector:     'h1',
+        hideMissingTitles: false,
+        markers:           false,
+        custom:            false,
+        themes:            false,
+        transitions:       false,
+        openButton:        false,
+        openSlideNumber:   true,
+        keyboard:          true,
+        loadIcons:         false
+      },
+
+
+      // setup charts
+      chart: {
+        defaults: {
+            global: {
+                "defaultFontFamily": "Lato",
+                "defaultFontColor": "black",
+                "defaultFontSize": 20,
+                title: {
+                    "fontFamily": "Lato",
+                    "fontSize": 30,
+                },
+                legend: {
+                    "position": "bottom"
+                }
+            },
+            responsive: "false"
+        },
+        line: {
+            backgroundColor: [ "rgba(42,157,223,.1)", "rgba(245,159,0,.1)", "rgba(182,200,40,.1)" ],
+            borderColor:     [ "rgba(42,157,223,1)", "rgba(245,159,0,1)", "rgba(182,200,40,1)" ],
+        },
+        bar: {
+            backgroundColor: [ "rgba(42,157,223,.8)", "rgba(245,159,0,.8)", "rgba(182,200,40,.8)" ],
+            borderColor:     [ "rgba(42,157,223,1)", "rgba(245,159,0,1)", "rgba(182,200,40,1)" ]
+        },
+        pie: {
+            backgroundColor: [ ["rgba(0,0,0,.8)" , "rgba(220,20,20,.8)", "rgba(20,220,20,.8)", "rgba(220,220,20,.8)", "rgba(20,20,220,.8)"] ]},
+        radar: {
+            borderColor: [ "rgba(20,220,220,.8)" , "rgba(220,120,120,.8)", "rgba(20,120,220,.8)" ]
+        }
+      },
+
+
+      // keyboard shortcuts
+      keyboard: {
+      40: function() { Reveal.next(); },                       // up:   next slide
+      38: function() { Reveal.prev(); },                       // down: prev slide
+      },
+
+
+      // load plugins
+	  dependencies: [
+      { src: './revealSlides/reveal.js-plugins/chart/Chart.min.js' },
+      { src: './revealSlides/reveal.js-plugins/chart/csv2chart.js' },
+      { src: './revealSlides/reveal.js/plugin/highlight/highlight.js' },
+	  { src: './revealSlides/mb-plugins/math/math.js' },
+      { src: './revealSlides/mb-plugins/chalkboard/chalkboard.js' }, 
+      { src: './revealSlides/mb-plugins/quiz/quiz.js' },
+      { src: './revealSlides/mb-plugins/footer/footer.js' },
+	  { src: './revealSlides/mb-plugins/notes/notes.js', async: true },
+      { src: './revealSlides/mb-plugins/zoom/zoom.js', async: true },
+      { src: './revealSlides/mb-plugins/search/search.js', async: true },
+      { src: './revealSlides/mb-plugins/menu/menu.js', async: true },
+      ]
+
+	  });
+    </script>
+
+  </body>
+
+</html>
